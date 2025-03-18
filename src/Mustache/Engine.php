@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+use Psr\Log\LoggerInterface;
+
 /**
  * A Mustache implementation in PHP.
  *
@@ -459,15 +461,13 @@ class Mustache_Engine
     {
         $this->getHelpers()->remove($name);
     }
-
+    
     /**
      * Set the Mustache Logger instance.
      *
-     * @throws Mustache_Exception_InvalidArgumentException If logger is not an instance of Mustache_Logger or Psr\Log\LoggerInterface
-     *
-     * @param Mustache_Logger|Psr\Log\LoggerInterface $logger
+     * @param LoggerInterface|Mustache_Logger|null $logger
      */
-    public function setLogger($logger = null)
+    public function setLogger(LoggerInterface|Mustache_Logger|null $logger = null): void
     {
         if ($logger !== null && !($logger instanceof Mustache_Logger || is_a($logger, 'Psr\\Log\\LoggerInterface'))) {
             throw new Mustache_Exception_InvalidArgumentException('Expected an instance of Mustache_Logger or Psr\\Log\\LoggerInterface.');
@@ -705,7 +705,7 @@ class Mustache_Engine
             );
         }
     }
-
+    
     /**
      * Load a Mustache lambda Template by source.
      *
@@ -713,11 +713,11 @@ class Mustache_Engine
      * likely ignore it completely.
      *
      * @param string $source
-     * @param string $delims (default: null)
+     * @param string|null $delims (default: null)
      *
      * @return Mustache_Template
      */
-    public function loadLambda($source, $delims = null)
+    public function loadLambda(string $source, ?string $delims = null): Mustache_Template
     {
         if ($delims !== null) {
             $source = $delims . "\n" . $source;
@@ -725,23 +725,23 @@ class Mustache_Engine
 
         return $this->loadSource($source, $this->getLambdaCache());
     }
-
+    
     /**
      * Instantiate and return a Mustache Template instance by source.
      *
      * Optionally provide a Mustache_Cache instance. This is used internally by Mustache_Engine::loadLambda to respect
      * the 'cache_lambda_templates' configuration option.
      *
+     * @param string|Mustache_Source $source
+     * @param Mustache_Cache|null $cache (default: null)
+     *
+     * @return Mustache_Template
      * @see Mustache_Engine::loadTemplate
      * @see Mustache_Engine::loadPartial
      * @see Mustache_Engine::loadLambda
      *
-     * @param string|Mustache_Source $source
-     * @param Mustache_Cache         $cache  (default: null)
-     *
-     * @return Mustache_Template
      */
-    private function loadSource($source, Mustache_Cache $cache = null)
+    private function loadSource(String|Mustache_Source $source, ?Mustache_Cache $cache = null): Mustache_Template
     {
         $className = $this->getTemplateClassName($source);
 
