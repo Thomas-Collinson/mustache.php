@@ -249,7 +249,7 @@ class Mustache_Context
                             if (property_exists($frame, $id)) {
                                 $rp = new \ReflectionProperty($frame, $id);
                                 if ($rp->isPublic()) {
-                                    return $frame->$id;
+                                    return $rp->isInitialized($frame) ? $frame->$id : '';
                                 }
                             }
 
